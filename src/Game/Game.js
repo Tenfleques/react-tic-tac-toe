@@ -13,6 +13,7 @@ class Game extends Component {
         stepNumber: 0,
         o : 'O',
         x : 'X',
+        vsComp : false,
         playerX: true,
         winningLines: [
           [0, 1, 2],
@@ -36,35 +37,37 @@ class Game extends Component {
       return null;
     }
 
-    compPlay = (squares) => {
+    compPlay = (squares,playerX ) => {
       //close user possible win, select best option to win
+      let toplay = playerX ? this.state.x : this.state.o;
+
       for (let i = 0; i < this.state.winningLines.length; i++) {
         const [a, b, c] = this.state.winningLines[i]; 
         if (squares[a] && squares[a] === squares[b] && !squares[c]) {
-          squares[c] = this.state.o;
+          squares[c] = toplay;
           return squares
         }
         if (squares[a] && squares[a] === squares[c] && !squares[b]) {
-          squares[b] = this.state.o;
+          squares[b] = toplay;
           return squares
         }
         if (squares[b] && squares[b] === squares[c] && !squares[a]) {
-          squares[a] = this.state.o;
+          squares[a] = toplay;
           return squares
         }
       }
       for (let i = 0; i < this.state.winningLines.length; i++) {
         const [a, b, c] = this.state.winningLines[i]; 
         if(squares[a] && !squares[b]){
-          squares[b] = this.state.o;
+          squares[b] = toplay;
           return squares
         }
         if(squares[b] && !squares[c]){
-          squares[c] = this.state.o;
+          squares[c] = toplay;
           return squares
         }
         if(squares[c] && !squares[b]){
-          squares[b] = this.state.o;
+          squares[b] = toplay;
           return squares
         }
       }
@@ -75,13 +78,17 @@ class Game extends Component {
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length - 1];
       let squares = current.squares.slice();
+      let playerX = this.state.playerX;
+
       if (this.calculateWinner(squares) || squares[i]) {
         return;
       }
-      squares[i] = this.state.x;
+      squares[i] = (playerX)? this.state.x : this.state.o;
+      playerX = !playerX;
 
-      if (!this.calculateWinner(squares)){
-        squares = this.compPlay(squares);
+      if (!this.calculateWinner(squares) && this.state.vsComp){
+        squares = this.compPlay(squares,playerX );
+        playerX = !playerX;
       }
 
       this.setState({
@@ -90,10 +97,18 @@ class Game extends Component {
             squares: squares
           }
         ]),
-        stepNumber: history.length
+        stepNumber: history.length,
+        playerX: playerX
       });
     }
-  
+    selectPlayer(){
+      this.setState({
+        vsComp : !this.state.vsComp
+      })
+    }
+    getVs(){
+      return this.state.vsComp ? "vs Computer": "vs Player O";
+    }
     jumpTo(step) {
       this.setState({
         stepNumber: step,
@@ -108,7 +123,7 @@ class Game extends Component {
       }else if (winner) {
         status = "Winner: " + winner;
       } else {
-        status = "Your turn";
+        status = "Player " + (this.state.playerX ? "X" : "O");
       }
       return status;
     }
@@ -149,7 +164,13 @@ class Game extends Component {
             />
           </div>
           <div className="game-info">
-            <div className={this.getStatusClass()}>{this.getStatus()}</div>
+            <div className="">
+              <div className = "vs-view" onClick={() => this.selectPlayer()}>
+                player X {this.getVs()}
+              </div> 
+              <br/>
+              <div className={this.getStatusClass()}>{this.getStatus()}</div>              
+            </div>            
             <ol>{this.getMoves()}</ol>
           </div>
         </div>

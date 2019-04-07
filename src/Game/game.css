@@ -18,3 +18,10 @@
     display: flex;
     margin-top: 1em;
 }
+.row{
+    display: flex
+}
+.vs-view{
+    text-align: center;
+    cursor: pointer;
+}
