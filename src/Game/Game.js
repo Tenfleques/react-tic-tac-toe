@@ -107,7 +107,7 @@ class Game extends Component {
       })
     }
     getVs(){
-      return this.state.vsComp ? "vs Computer": "vs Player O";
+      return this.state.vsComp ? "vs Computer": "vs player";
     }
     jumpTo(step) {
       this.setState({
@@ -165,9 +165,9 @@ class Game extends Component {
           </div>
           <div className="game-info">
             <div className="">
-              <div className = "vs-view" onClick={() => this.selectPlayer()}>
-                player X {this.getVs()}
-              </div> 
+              <button className = "vs-view" onClick={() => this.selectPlayer()}>
+                {this.getVs()}
+              </button> 
               <br/>
               <div className={this.getStatusClass()}>{this.getStatus()}</div>              
             </div>            
