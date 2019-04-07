@@ -136,6 +136,9 @@ class Game extends Component {
       });
       return moves;
     }
+    getStatusClass = ()=>{
+      return (this.getWinner().winner)? "success": "";
+    }
     render() {     
       return (
         <div className="game">
@@ -146,7 +149,7 @@ class Game extends Component {
             />
           </div>
           <div className="game-info">
-            <div className={(this.getWinner().winner)? "success": ""}>{this.getStatus()}</div>
+            <div className={this.getStatusClass()}>{this.getStatus()}</div>
             <ol>{this.getMoves()}</ol>
           </div>
         </div>
